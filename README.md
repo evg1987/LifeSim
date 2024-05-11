@@ -1,10 +1,10 @@
-#Artifical Life Simulation
+# Artifical Life Simulation
 Research project
 
-###Require:
+### Require:
 - MonoGame
 
-###Controls
+### Controls
 - RMB and Wheel - map control
 - Spacebar - pause
 - R - restart simulation
