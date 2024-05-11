@@ -37,7 +37,17 @@ public sealed class Agent
     public double EnergyForMovement = 1.0;
 
     /// <summary>
-    /// Number of neighbours of same team for stabile state
+    /// How many energy points require for stabile state (group of agents)
+    /// </summary>
+    public double EnergyForStabileState = 0.01f;
+
+    /// <summary>
+    /// How many energy points require for non-stabile state (outside of group of agents)
+    /// </summary>
+    public double EnergyForNonStabileState = 0.25f;
+
+    /// <summary>
+    /// Number of neighbours of same team for stabile state (group of agents)
     /// </summary>
     public int NeighboursForStability = 3;
 }

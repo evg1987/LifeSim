@@ -75,8 +75,18 @@ public class Agent
 
 	public void Update()
 	{
+		// check in that state agent is: stabile or non-stabile
+		bool isStabileState = GetNumNeighbours() >= World.Instance.Settings.Agent.NeighboursForStability;
 
-		if (Energy >= World.Instance.Settings.Agent.EnergyForChildSpawn)
+		// energy requirements for one simulation step
+        double energyForSimStep = isStabileState
+			? World.Instance.Settings.Agent.EnergyForStabileState      // stabile (in group)
+			: World.Instance.Settings.Agent.EnergyForNonStabileState;  // non-stabile (outside of group)
+
+		Energy -= energyForSimStep;
+
+        // does it have energy for child spawn?
+        if (Energy >= World.Instance.Settings.Agent.EnergyForChildSpawn)
 		{
 			// spawn child
 			double childEnergy = Energy / 2.0;
@@ -93,19 +103,15 @@ public class Agent
 		}
 		else
 		{
-			// stability
-			if (GetNumNeighbours() < World.Instance.Settings.Agent.NeighboursForStability)
+			// try to move to another site
+			if (!isStabileState)
 			{
 				if (Energy >= World.Instance.Settings.Agent.EnergyForMovement)
 				{
 					Energy -= World.Instance.Settings.Agent.EnergyForMovement;
 					MoveToAnotherSite();
 				}
-				else
-				{
-					Energy--;
-				}
-            }
+			}
         }
     }
 
