@@ -88,9 +88,7 @@ public class Agent
 				Energy -= childEnergy;
 
 				// drain energy from site
-				double energyDrain = Math.Min(World.Instance.Settings.Agent.EnergyConsumptionFromCellSpeed, child.Site.Energy);
-				child.Energy += energyDrain;
-				child.Site.Energy -= energyDrain;
+				child.DrainEnergyFromSite();
 			}
 		}
 		else
@@ -181,9 +179,7 @@ public class Agent
 				destination.Agent = this;
 
 				// consume site energy
-				double energyDrain = World.Instance.Settings.Agent.EnergyConsumptionFromCellSpeed;
-				Energy += Math.Min(energyDrain, Site.Energy);
-				Site.Energy = Math.Max(0.0, Site.Energy - energyDrain);
+				DrainEnergyFromSite();
 
 				return true;
 			}
@@ -241,5 +237,12 @@ public class Agent
         }
 
 		return result;
+    }
+
+	private void DrainEnergyFromSite()
+	{
+        double energyDrain = Math.Min(World.Instance.Settings.Agent.EnergyConsumptionFromCellSpeed, Site.Energy);
+        Energy += energyDrain;
+        Site.Energy -= energyDrain;
     }
 }
