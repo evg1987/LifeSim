@@ -27,7 +27,8 @@ public class Playboard : GridCellsLayout<Cell>
 	bool spaceKeyPressedPrev;
 	bool restartKeyPressedPrev;
 
-	TeamVisualSettings[] teamVisualSettings;
+	CellVisualSettings siteWithoutAgent;
+    CellVisualSettings[] teamVisualSettings;
 
 	/// <summary>
 	/// Transform matrix
@@ -75,30 +76,8 @@ public class Playboard : GridCellsLayout<Cell>
 		this.graphics = graphics;
 		this.texture = texture;
 
-		// team visual settings for displaying agents
-		teamVisualSettings = new TeamVisualSettings[4];
-		teamVisualSettings[0] = new TeamVisualSettings
-		{
-			Color1 = new Color(64, 0, 0),
-			Color2 = new Color(255, 0, 0)
-        };
-        teamVisualSettings[1] = new TeamVisualSettings
-        {
-            Color1 = new Color(0, 64, 0),
-            Color2 = new Color(0, 255, 0)
-        };
-        teamVisualSettings[2] = new TeamVisualSettings
-        {
-            Color1 = new Color(0, 64, 64),
-            Color2 = new Color(0, 255, 255)
-        };
-        teamVisualSettings[3] = new TeamVisualSettings
-        {
-            Color1 = new Color(64, 64, 0),
-            Color2 = new Color(255, 255, 0)
-        };
-
-		InitializeCells();
+		InitializeVisualSettings();
+        InitializeCells();
 		Restart();
     }
 
@@ -145,6 +124,44 @@ public class Playboard : GridCellsLayout<Cell>
 		{
 			World.Instance.Update();
 		}
+    }
+
+	private void InitializeVisualSettings()
+	{
+        // site without agent
+        siteWithoutAgent = new CellVisualSettings
+        {
+            Color1 = new Color(32, 32, 32),
+            Color2 = new Color(128, 128, 128)
+        };
+
+        // team visual settings for displaying agents
+        teamVisualSettings = new CellVisualSettings[5];
+        teamVisualSettings[0] = new CellVisualSettings
+        {
+            Color1 = new Color(64, 0, 0),
+            Color2 = new Color(255, 0, 0)
+        };
+        teamVisualSettings[1] = new CellVisualSettings
+        {
+            Color1 = new Color(0, 64, 0),
+            Color2 = new Color(0, 255, 0)
+        };
+        teamVisualSettings[2] = new CellVisualSettings
+        {
+            Color1 = new Color(0, 64, 64),
+            Color2 = new Color(0, 255, 255)
+        };
+        teamVisualSettings[3] = new CellVisualSettings
+        {
+            Color1 = new Color(64, 64, 0),
+            Color2 = new Color(255, 255, 0)
+        };
+        teamVisualSettings[4] = new CellVisualSettings
+        {
+            Color1 = new Color(64, 0, 64),
+            Color2 = new Color(255, 0, 255)
+        };
     }
 
 	private void UpdateTransform()
@@ -208,17 +225,17 @@ public class Playboard : GridCellsLayout<Cell>
 	{
 		if (site.Agent != null)
 		{
-			TeamVisualSettings settings = teamVisualSettings[site.Agent.Team];
+			// site with agent
+
+			CellVisualSettings settings = teamVisualSettings[site.Agent.Team];
 			float f = Math.Clamp(site.Agent.Energy / 200.0f, 0.0f, 1.0f);
 			cell.Color = Color.Lerp(settings.Color1, settings.Color2, f);
 		}
 		else
 		{
-			Color color1 = new Color(32, 32, 32);
-            Color color2 = new Color(128, 128, 128);
-
-			float r = Math.Clamp(site.Energy / 30.0f, 0.0f, 1.0f);
-			cell.Color = Color.Lerp(color1, color2, r);
+			// site without agent
+			float f = Math.Clamp(site.Energy / (float)World.Instance.Settings.World.CellEnergyMax, 0.0f, 1.0f);
+			cell.Color = Color.Lerp(siteWithoutAgent.Color1, siteWithoutAgent.Color2, f);
         }
     }
 
