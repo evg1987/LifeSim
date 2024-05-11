@@ -9,32 +9,32 @@ public sealed class Agent
     /// <summary>
     /// How many energy points does agent have on spawn 
     /// </summary>
-    public int EnergyAtStart = 20;
+    public double EnergyAtStart = 20.0;
 
     /// <summary>
     /// Maximum amount of energy (limit)
     /// </summary>
-    public int EnergyMax = 200;
+    public double EnergyMax = 200.0;
 
     /// <summary>
     /// How many energy points does agent give to cell on die
     /// </summary>
-    public int EnergyOfCorpse = 10;
+    public double EnergyOfCorpse = 10.0;
 
     /// <summary>
     /// How many energy points does it need for child spawn
     /// </summary>
-    public int EnergyForChildSpawn = 40;
+    public double EnergyForChildSpawn = 40.0;
 
     /// <summary>
     /// How many energy points does agent drain from cell
     /// </summary>
-    public int EnergyConsumptionFromCellSpeed = 2;
+    public double EnergyConsumptionFromCellSpeed = 2.0;
 
     /// <summary>
     /// How many energy points does it need for movement to another cell
     /// </summary>
-    public int EnergyForMovement = 1;
+    public double EnergyForMovement = 1.0;
 
     /// <summary>
     /// Number of neighbours of same team for stabile state

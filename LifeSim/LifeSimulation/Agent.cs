@@ -10,7 +10,7 @@ namespace LifeSim.LifeSimulation;
 /// </summary>
 public class Agent
 {
-	int energy = World.Instance.Settings.Agent.EnergyAtStart;
+	double energy = World.Instance.Settings.Agent.EnergyAtStart;
 
     /// <summary>
     /// Allowed movement directions relative to current site coordinates
@@ -42,9 +42,9 @@ public class Agent
 	/// Energy is used for useful actions and is decreased every simulation step.
 	/// If energy is 0 - agent dies
 	/// </summary>
-	public int Energy {
+	public double Energy {
 		get { return energy; }
-		set { energy = Math.Clamp(value, 0, World.Instance.Settings.Agent.EnergyMax); }
+		set { energy = Math.Clamp(value, 0.0, World.Instance.Settings.Agent.EnergyMax); }
 	}
 
     /// <summary>
@@ -79,17 +79,16 @@ public class Agent
 		if (Energy >= World.Instance.Settings.Agent.EnergyForChildSpawn)
 		{
 			// spawn child
-			int childEnergy = Energy / 2;
+			double childEnergy = Energy / 2.0;
 			Agent child = SpawnChild();
 			if (child != null)
 			{
 				// the child has been spawned
 				child.Energy = childEnergy;
 				Energy -= childEnergy;
-				child.Site.Energy = 0;
 
 				// drain energy from site
-				int energyDrain = Math.Min(World.Instance.Settings.Agent.EnergyConsumptionFromCellSpeed, child.Site.Energy);
+				double energyDrain = Math.Min(World.Instance.Settings.Agent.EnergyConsumptionFromCellSpeed, child.Site.Energy);
 				child.Energy += energyDrain;
 				child.Site.Energy -= energyDrain;
 			}
@@ -182,9 +181,9 @@ public class Agent
 				destination.Agent = this;
 
 				// consume site energy
-				int energyDrain = World.Instance.Settings.Agent.EnergyConsumptionFromCellSpeed;
+				double energyDrain = World.Instance.Settings.Agent.EnergyConsumptionFromCellSpeed;
 				Energy += Math.Min(energyDrain, Site.Energy);
-				Site.Energy = Math.Max(0, Site.Energy - energyDrain);
+				Site.Energy = Math.Max(0.0, Site.Energy - energyDrain);
 
 				return true;
 			}

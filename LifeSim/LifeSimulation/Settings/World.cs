@@ -9,10 +9,10 @@ public sealed class World
 	/// <summary>
 	/// Minimum amount of cell energy at simulation start
 	/// </summary>
-	public int CellEnergyMin = 5;
+	public double CellEnergyMin = 5.0;
 
     /// <summary>
     /// Maximum amount of cell energy at simulation start
     /// </summary>
-    public int CellEnergyMax = 200;
+    public double CellEnergyMax = 20.0;
 }

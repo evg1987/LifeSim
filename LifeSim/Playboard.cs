@@ -228,13 +228,13 @@ public class Playboard : GridCellsLayout<Cell>
 			// site with agent
 
 			CellVisualSettings settings = teamVisualSettings[site.Agent.Team];
-			float f = Math.Clamp(site.Agent.Energy / (float)World.Instance.Settings.Agent.EnergyMax, 0.0f, 1.0f);
+			float f = (float)Math.Clamp(site.Agent.Energy / World.Instance.Settings.Agent.EnergyMax, 0.0, 1.0);
 			cell.Color = Color.Lerp(settings.Color1, settings.Color2, f);
 		}
 		else
 		{
 			// site without agent
-			float f = Math.Clamp(site.Energy / (float)World.Instance.Settings.World.CellEnergyMax, 0.0f, 1.0f);
+			float f = (float)Math.Clamp(site.Energy / World.Instance.Settings.World.CellEnergyMax, 0.0, 1.0);
 			cell.Color = Color.Lerp(siteWithoutAgent.Color1, siteWithoutAgent.Color2, f);
         }
     }

@@ -7,6 +7,7 @@ namespace LifeSim.LifeSimulation;
 public class Site
 {
 	Agent agent;
+	double energy;
 
 	/// <summary>
 	/// Site coordinate X
@@ -18,7 +19,14 @@ public class Site
 	/// </summary>
 	public readonly int Y;
 
-	public int Energy;
+	/// <summary>
+	/// Energy that can be consumed by agents
+	/// </summary>
+	public double Energy
+	{
+		get { return energy; }
+		set { energy = Math.Clamp(value, 0.0, World.Instance.Settings.World.CellEnergyMax); }
+	}
 
 	/// <summary>
 	/// Agent that occupies this site
