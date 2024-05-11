@@ -21,13 +21,18 @@ public class World : GridCellsLayout<Site>
 	/// </summary>
 	public readonly Random Random;
 
+	/// <summary>
+	/// Simulation settings
+	/// </summary>
+	public Settings.Simulation Settings { get; private set; }
+
     /// <summary>
     /// Construct world and start simulation
     /// </summary>
     /// <param name="width">Number of cells (horizontal)</param>
     /// <param name="height">Number of cells (vertical)</param>
 	/// <param name="seed">Seed for all random generators</param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException"/>
     public World(int width, int height, int seed)
 		: base(width, height)
 	{
@@ -40,6 +45,7 @@ public class World : GridCellsLayout<Site>
 
 		Random = new Random(seed);
 		Seed = seed;
+		Settings = new Settings.Simulation();
 
 		InitializeCells();
 		InitCites();
@@ -66,8 +72,6 @@ public class World : GridCellsLayout<Site>
     private void InitCites()
 	{
         const float NOISE_STEP = 0.1f;
-		const float ENERGY_MIN = 20.0f;
-		const float ENERGY_MAX = 50.0f;
 
         Perlin.Reseed(Seed);
 
@@ -88,7 +92,7 @@ public class World : GridCellsLayout<Site>
         {
             for (int h = 0; h < Height; h++, n++)
             {
-                Cells[w, h].Energy = Math.Clamp((int)(noise[n] * ENERGY_MAX), (int)ENERGY_MIN, (int)ENERGY_MAX);
+                Cells[w, h].Energy = Math.Clamp((int)(noise[n] * Settings.World.CellEnergyMax), Settings.World.CellEnergyMin, Settings.World.CellEnergyMax);
             }
         }
     }

@@ -70,7 +70,7 @@ public class Site
 			else
 			{
 				// dead
-				Energy += Agent.CorpseEnergy;
+				Energy += World.Instance.Settings.Agent.EnergyOfCorpse;
 				Agent = null;
 			}
         }

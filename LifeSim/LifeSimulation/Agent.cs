@@ -40,22 +40,12 @@ public class Agent
 	/// Energy is used for useful actions and is decreased every simulation step.
 	/// If energy is 0 - agent dies
 	/// </summary>
-	public int Energy = 100;
+	public int Energy = World.Instance.Settings.Agent.EnergyAtStart;
 
-	/// <summary>
-	/// How many energy remains when agent dies
-	/// </summary>
-	public int CorpseEnergy = 50;
-
-	/// <summary>
-	/// How many energy required for spawn child agent
-	/// </summary>
-	public int SpawnEnergy = 200;
-
-	/// <summary>
-	/// Site occupied by agent
-	/// </summary>
-	public Site Site
+    /// <summary>
+    /// Site occupied by agent
+    /// </summary>
+    public Site Site
 	{
 		get
 		{
@@ -81,7 +71,7 @@ public class Agent
 	public void Update()
 	{
 
-		if (Energy >= SpawnEnergy)
+		if (Energy >= World.Instance.Settings.Agent.EnergyForChildSpawn)
 		{
 			// spawn child
 			int childEnergy = Energy / 2;
@@ -89,17 +79,30 @@ public class Agent
 			if (child != null)
 			{
 				// the child has been spawned
-				child.Energy = childEnergy + child.Site.Energy;
+				child.Energy = childEnergy;
 				Energy -= childEnergy;
 				child.Site.Energy = 0;
+
+				// drain energy from site
+				int energyDrain = Math.Min(World.Instance.Settings.Agent.EnergyConsumptionFromCellSpeed, child.Site.Energy);
+				child.Energy += energyDrain;
+				child.Site.Energy -= energyDrain;
 			}
 		}
 		else
 		{
-			if (GetNumNeighbours() < 3)
+			// stability
+			if (GetNumNeighbours() < World.Instance.Settings.Agent.NeighboursForStability)
 			{
-				Energy--;
-				MoveToAnotherSite();
+				if (Energy >= World.Instance.Settings.Agent.EnergyForMovement)
+				{
+					Energy -= World.Instance.Settings.Agent.EnergyForMovement;
+					MoveToAnotherSite();
+				}
+				else
+				{
+					Energy--;
+				}
             }
         }
     }
@@ -174,8 +177,9 @@ public class Agent
 				destination.Agent = this;
 
 				// consume site energy
-				Energy += Math.Min(2, Site.Energy);
-				Site.Energy = Math.Max(0, Site.Energy - 2);
+				int energyDrain = World.Instance.Settings.Agent.EnergyConsumptionFromCellSpeed;
+				Energy += Math.Min(energyDrain, Site.Energy);
+				Site.Energy = Math.Max(0, Site.Energy - energyDrain);
 
 				return true;
 			}
