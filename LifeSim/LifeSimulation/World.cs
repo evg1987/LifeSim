@@ -7,19 +7,9 @@ namespace LifeSim.LifeSimulation;
 /// The World contains cites (world cells) which contains agents (living species)
 /// and responsible for updating the first and the second ones
 /// </summary>
-public class World
+public class World : GridCellsLayout<Site>
 {
 	public static World Instance { get; private set; }
-
-	/// <summary>
-	/// Number of cells (horizontal)
-	/// </summary>
-	public readonly int Width;
-
-	/// <summary>
-	/// Number of cells (vertical)
-	/// </summary>
-	public readonly int Height;
 
 	/// <summary>
 	/// Random generator seed
@@ -31,19 +21,15 @@ public class World
 	/// </summary>
 	public readonly Random Random;
 
-	/// <summary>
-	/// World cells where agents are living
-	/// </summary>
-    public Site[,] Sites { get; private set; }
-
     /// <summary>
-    /// 
+    /// Construct world and start simulation
     /// </summary>
     /// <param name="width">Number of cells (horizontal)</param>
     /// <param name="height">Number of cells (vertical)</param>
 	/// <param name="seed">Seed for all random generators</param>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     public World(int width, int height, int seed)
+		: base(width, height)
 	{
 		if (width < 1 || height < 1)
 		{
@@ -52,21 +38,10 @@ public class World
 
 		Instance = this;
 
-		Width = width;
-		Height = height;
 		Random = new Random(seed);
 		Seed = seed;
 
-		// init cites
-		Sites = new Site[Width, Height];
-		for (int w = 0; w < Width; w++)
-		{
-			for (int h = 0; h < Height; h++)
-			{
-				Sites[w, h] = new Site(w, h);
-			}
-		}
-
+		InitializeCells();
 		InitCites();
 		InitAgents();
 	}
@@ -76,34 +51,15 @@ public class World
 	/// </summary>
 	public void Update()
 	{
-        for (int w = 0; w < Width; w++)
-        {
-            for (int h = 0; h < Height; h++)
-            {
-				Sites[w, h].Update();
-            }
-        }
+		foreach (Site site in EnumerateCells())
+		{
+			site.Update();
+		}
     }
-
-	/// <summary>
-	/// Check if cite coordinates within world bounds
-	/// </summary>
-	public bool IsValidCiteCoords(int x, int y)
-	{
-		return x >= 0 && x < Width && y >= 0 && y < Height;
-	}
-
-    /// <summary>
-    /// Check if cite coordinates within world bounds
-    /// </summary>
-    public bool IsValidCiteCoords(Point citeCoords)
-	{
-		return IsValidCiteCoords(citeCoords.X, citeCoords.Y);
-	}
 
 	private Site GetRandomSite()
 	{
-		Site site = Sites[Random.Next() % Width, Random.Next() % Height];
+		Site site = Cells[Random.Next() % Width, Random.Next() % Height];
 		return site;
 	}
 
@@ -132,7 +88,7 @@ public class World
         {
             for (int h = 0; h < Height; h++, n++)
             {
-                Sites[w, h].Energy = Math.Clamp((int)(noise[n] * ENERGY_MAX), (int)ENERGY_MIN, (int)ENERGY_MAX);
+                Cells[w, h].Energy = Math.Clamp((int)(noise[n] * ENERGY_MAX), (int)ENERGY_MIN, (int)ENERGY_MAX);
             }
         }
     }
@@ -154,4 +110,9 @@ public class World
 			}
 		}
 	}
+
+    protected override Site ConstructCell(int x, int y)
+    {
+		return new Site(x, y);
+    }
 }

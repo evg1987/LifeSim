@@ -59,8 +59,8 @@ public class Agent
 	{
 		get
 		{
-			return World.Instance.IsValidCiteCoords(X, Y)
-				? World.Instance.Sites[X, Y]
+			return World.Instance.IsValidCoords(X, Y)
+				? World.Instance.Cells[X, Y]
 				: null;
 		}
 	}
@@ -113,7 +113,7 @@ public class Agent
 			Point c = new Point(X + dir.X, Y + dir.Y);
 			if (CanMoveIntoSite(c.X, c.Y))
 			{
-				result.Add(World.Instance.Sites[c.X, c.Y]);
+				result.Add(World.Instance.Cells[c.X, c.Y]);
 			}
 		}
 		return result;
@@ -125,9 +125,9 @@ public class Agent
         foreach (Point dir in movementMatrix)
         {
             Point c = new Point(X + dir.X, Y + dir.Y);
-            if (World.Instance.IsValidCiteCoords(c.X, c.Y))
+            if (World.Instance.IsValidCoords(c.X, c.Y))
             {
-				Site site = World.Instance.Sites[c.X, c.Y];
+				Site site = World.Instance.Cells[c.X, c.Y];
 				if (site.Agent == null)
 				{
 					result.Add(site);
@@ -139,7 +139,7 @@ public class Agent
 
 	private bool CanMoveIntoSite(int x, int y)
 	{
-		return World.Instance.IsValidCiteCoords(x, y) && CanMoveIntoSite(World.Instance.Sites[x, y]);
+		return World.Instance.IsValidCoords(x, y) && CanMoveIntoSite(World.Instance.Cells[x, y]);
 	}
 
 	private bool CanMoveIntoSite(Site site)
@@ -222,9 +222,9 @@ public class Agent
         foreach (Point dir in movementMatrix)
         {
             Point c = new Point(X + dir.X, Y + dir.Y);
-            if (World.Instance.IsValidCiteCoords(c.X, c.Y))
+            if (World.Instance.IsValidCoords(c.X, c.Y))
             {
-                Site site = World.Instance.Sites[c.X, c.Y];
+                Site site = World.Instance.Cells[c.X, c.Y];
                 if (site.Agent != null && site.Agent.Team == Team)
                 {
 					result++;

@@ -9,15 +9,16 @@ namespace LifeSim;
 /// <summary>
 /// Playboard draws cells and allows user to move and scale
 /// </summary>
-public class Playboard
+public class Playboard : GridCellsLayout<Cell>
 {
 	/// <summary>
 	/// Cell size in pixels
 	/// </summary>
 	const float CELL_SIZE = 16.0f;
 
-	GraphicsDeviceManager graphics;
+	readonly GraphicsDeviceManager graphics;
     readonly SpriteBatch spriteBatch;
+	readonly Texture2D texture;
 
 	bool isDragging;
 	Point draggingStartPos;
@@ -27,21 +28,6 @@ public class Playboard
 	bool restartKeyPressedPrev;
 
 	TeamVisualSettings[] teamVisualSettings;
-
-	/// <summary>
-	/// Number of cells (horizontal)
-	/// </summary>
-	public readonly int Width;
-
-    /// <summary>
-    /// Number of cells (vertical)
-    /// </summary>
-    public readonly int Height;
-
-	/// <summary>
-	/// Cells with payload (size of array is Width*Height)
-	/// </summary>
-    public Cell[,] Cells { get; private set; }
 
 	/// <summary>
 	/// Transform matrix
@@ -68,12 +54,8 @@ public class Playboard
 	/// <exception cref="ArgumentOutOfRangeException"/>
 	/// <exception cref="ArgumentNullException"/>
 	public Playboard(int width, int height, SpriteBatch spriteBatch, GraphicsDeviceManager graphics, Texture2D texture)
+		:base(width, height)
 	{
-		if (width < 1 || height < 1)
-		{
-			throw new ArgumentOutOfRangeException("Invalid width or height");
-		}
-
 		if (spriteBatch == null)
 		{
 			throw new ArgumentNullException(nameof(spriteBatch));
@@ -89,20 +71,9 @@ public class Playboard
 			throw new ArgumentNullException(nameof(texture));
 		}
 
-		Width = width;
-		Height = height;
 		this.spriteBatch = spriteBatch;
 		this.graphics = graphics;
-
-		// initialize cells array
-		Cells = new Cell[Width, Height];
-		for (int w = 0; w < Width; w++)
-		{
-			for (int h = 0; h < Height; h++)
-			{
-				Cells[w, h] = new Cell(spriteBatch, texture, new Vector2(w * CELL_SIZE, h * CELL_SIZE));
-			}
-		}
+		this.texture = texture;
 
 		// team visual settings for displaying agents
 		teamVisualSettings = new TeamVisualSettings[4];
@@ -127,22 +98,26 @@ public class Playboard
             Color2 = new Color(255, 255, 0)
         };
 
+		InitializeCells();
 		Restart();
     }
 
-	/// <summary>
-	/// Draw the playboard
-	/// </summary>
-	public void Draw()
+    protected override Cell ConstructCell(int x, int y)
+    {
+        Cell cell = new Cell(spriteBatch, texture, new Vector2(x * CELL_SIZE, y * CELL_SIZE));
+		return cell;
+    }
+
+    /// <summary>
+    /// Draw the playboard
+    /// </summary>
+    public void Draw()
 	{
 		spriteBatch.Begin(transformMatrix: Matrix);
-        for (int w = 0; w < Width; w++)
-        {
-            for (int h = 0; h < Height; h++)
-            {
-				Cells[w, h].Draw();
-            }
-        }
+		foreach (Cell cell in EnumerateCells())
+		{
+			cell.Draw();
+		}
 		spriteBatch.End();
     }
 
@@ -220,11 +195,11 @@ public class Playboard
 
 	private void UpdateCells()
 	{
-        for (int w = 0; w < Width; w++)
+        for (int h = 0; h < Height; h++)
         {
-            for (int h = 0; h < Height; h++)
+            for (int w = 0; w < Width; w++)
             {
-                Update(World.Instance.Sites[w, h], Cells[w, h]);
+                Update(World.Instance.Cells[w, h], Cells[w, h]);
             }
         }
     }
