@@ -10,10 +10,12 @@ namespace LifeSim.LifeSimulation;
 /// </summary>
 public class Agent
 {
-	/// <summary>
-	/// Allowed movement directions relative to current site coordinates
-	/// </summary>
-	readonly Point[] movementMatrix;
+	int energy = World.Instance.Settings.Agent.EnergyAtStart;
+
+    /// <summary>
+    /// Allowed movement directions relative to current site coordinates
+    /// </summary>
+    readonly Point[] movementMatrix;
 
 	/// <summary>
 	/// Team defines relationship between other agents
@@ -40,7 +42,10 @@ public class Agent
 	/// Energy is used for useful actions and is decreased every simulation step.
 	/// If energy is 0 - agent dies
 	/// </summary>
-	public int Energy = World.Instance.Settings.Agent.EnergyAtStart;
+	public int Energy {
+		get { return energy; }
+		set { energy = Math.Clamp(value, 0, World.Instance.Settings.Agent.EnergyMax); }
+	}
 
     /// <summary>
     /// Site occupied by agent

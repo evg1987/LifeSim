@@ -228,7 +228,7 @@ public class Playboard : GridCellsLayout<Cell>
 			// site with agent
 
 			CellVisualSettings settings = teamVisualSettings[site.Agent.Team];
-			float f = Math.Clamp(site.Agent.Energy / 200.0f, 0.0f, 1.0f);
+			float f = Math.Clamp(site.Agent.Energy / (float)World.Instance.Settings.Agent.EnergyMax, 0.0f, 1.0f);
 			cell.Color = Color.Lerp(settings.Color1, settings.Color2, f);
 		}
 		else

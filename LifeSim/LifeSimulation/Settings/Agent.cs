@@ -12,6 +12,11 @@ public sealed class Agent
     public int EnergyAtStart = 20;
 
     /// <summary>
+    /// Maximum amount of energy (limit)
+    /// </summary>
+    public int EnergyMax = 200;
+
+    /// <summary>
     /// How many energy points does agent give to cell on die
     /// </summary>
     public int EnergyOfCorpse = 10;
